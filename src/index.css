@@ -1,0 +1,218 @@
+@import url("https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800&family=Amiri:wght@400;700&family=Tajawal:wght@400;500;700&display=swap");
+@import "tailwindcss";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+/*
+==========================================================================
+【AI HANDOVER NOTE】
+1. DESIGN PHILOSOPHY:
+   - Islamic Heritage Meets Modern Luxury: This design system embodies the spiritual dignity and visual richness of Islamic charitable foundations while maintaining contemporary web standards. The approach is 'Spiritual Minimalism with Royal Accents' - clean, spacious layouts punctuated by deliberate gold highlights and geometric Islamic patterns.
+   - Premium Nonprofit Identity: Unlike typical charity websites, this system creates an official, trustworthy, high-end visual language suitable for a Quran foundation. Think museum-quality presentation meets community warmth.
+   - RTL-First Architecture: Every token, spacing, and layout decision prioritizes Arabic right-to-left reading flow, ensuring natural visual hierarchy for Arabic typography.
+
+2. TYPOGRAPHY:
+   - Cairo: Selected as primary sans for its exceptional Arabic readability, elegant proportions, and professional weight range (400-800). Its geometric structure provides modern clarity while respecting traditional Arabic calligraphic principles.
+   - Amiri: Used sparingly for decorative headings and Quranic text - brings classical Naskh script beauty for spiritual authenticity.
+   - Tajawal: Fallback sans ensuring consistent rendering across devices, particularly mobile.
+
+3. COLOR SYSTEM:
+   - Brand Foundation (Deep Islamic Green): --brand maps to rich forest green (H: 155°) representing growth, peace, and Islamic tradition. This anchors --primary for interactive elements and --sidebar for navigation.
+   - Royal Gold Accent: --accent uses warm gold (H: 45°) for highlights, CTAs, and decorative elements - symbolizing generosity and divine light in Islamic art.
+   - Semantic Hierarchy: --success uses emerald green (H: 150°) for donation confirmations; --warning uses amber (H: 40°) for registration deadlines; --destructive uses muted red-brown (H: 15°) to avoid harsh alarm while maintaining urgency.
+   - Warm Neutral System: Backgrounds use cream/beige tones (--muted with slight yellow shift) creating welcoming warmth vs. cold grays. --card uses pure white for content elevation.
+   - Dark Mode: Deep olive-green background (not pure black) maintains Islamic aesthetic continuity; gold accents become slightly desaturated for eye comfort during night reading.
+
+4. USAGE GUIDE:
+   - Layout Type: Full-width hero sections with centered 1280px max-width containers for content. Alternating section backgrounds (white/cream) create visual rhythm.
+   - Islamic Geometric Patterns: Use SVG overlays with --accent at 8-12% opacity for decorative backgrounds. Apply to hero, section dividers, and card borders.
+   - Gold Accents Strategy: Reserve --accent for primary CTAs, decorative dividers, active states, and counter highlights. Overuse dilutes luxury perception.
+   - Typography Scale: Arabic requires 1.15x larger base size than Latin (18px minimum for body). Headings use 700-800 weight for authority.
+   - Shadows & Depth: Soft, warm shadows (use --muted-foreground at 8% opacity) - avoid harsh blacks. Cards float subtly with 2-4px elevation.
+   - RTL Considerations: All directional properties (margin-right, padding-left, border-radius corners) must flip. Use logical properties (margin-inline-start) in CSS.
+   - Mobile Optimization: Touch targets minimum 48px, generous padding (24px+), collapsible navigation with elegant slide-in drawer.
+   - Accessibility: WCAG AAA contrast for body text (green on cream), AA for UI elements. Gold on white meets AA for large text only.
+   - Animation Philosophy: Smooth, dignified transitions (300-400ms ease-out). Counter animations, scroll-triggered fades, but avoid flashy effects inappropriate for spiritual context.
+   - Special Components: Floating WhatsApp button uses --accent background; sticky header transitions from transparent to --background with backdrop-blur; loading screen uses animated Islamic geometric pattern in --primary.
+==========================================================================
+*/
+
+:root {
+  /* Typography */
+  --font-sans: 'Cairo', 'Tajawal', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-mono: 'Courier New', monospace;
+  
+  /* Radius */
+  --radius: 0.75rem;
+
+  /* Core UI Tokens */
+  --background: oklch(0.99 0.005 85);
+  --foreground: oklch(0.15 0.02 155);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.18 0.025 155);
+  --popover: oklch(0.99 0.008 75);
+  --popover-foreground: oklch(0.16 0.02 155);
+  --primary: oklch(0.35 0.11 155);
+  --primary-foreground: oklch(0.98 0.005 85);
+  --secondary: oklch(0.92 0.015 75);
+  --secondary-foreground: oklch(0.22 0.03 155);
+  --muted: oklch(0.96 0.012 70);
+  --muted-foreground: oklch(0.48 0.02 155);
+  --accent: oklch(0.68 0.14 45);
+  --accent-foreground: oklch(0.15 0.02 155);
+  --destructive: oklch(0.55 0.18 15);
+  --destructive-foreground: oklch(0.98 0.005 85);
+  --border: oklch(0.88 0.015 155);
+  --input: oklch(0.90 0.012 155);
+  --ring: oklch(0.68 0.14 45);
+  
+  /* Chart Tokens */
+  --chart-1: oklch(0.42 0.12 155);
+  --chart-2: oklch(0.68 0.14 45);
+  --chart-3: oklch(0.55 0.10 150);
+  --chart-4: oklch(0.72 0.12 50);
+  --chart-5: oklch(0.48 0.08 160);
+  
+  /* Sidebar Tokens */
+  --sidebar: oklch(0.28 0.10 155);
+  --sidebar-foreground: oklch(0.95 0.008 75);
+  --sidebar-primary: oklch(0.68 0.14 45);
+  --sidebar-primary-foreground: oklch(0.15 0.02 155);
+  --sidebar-accent: oklch(0.38 0.12 155);
+  --sidebar-accent-foreground: oklch(0.98 0.005 85);
+  --sidebar-border: oklch(0.35 0.08 155);
+  --sidebar-ring: oklch(0.68 0.14 45);
+}
+
+.dark {
+  --background: oklch(0.16 0.025 155);
+  --foreground: oklch(0.94 0.008 75);
+  --card: oklch(0.20 0.028 155);
+  --card-foreground: oklch(0.92 0.010 75);
+  --popover: oklch(0.18 0.026 155);
+  --popover-foreground: oklch(0.94 0.008 75);
+  --primary: oklch(0.48 0.13 155);
+  --primary-foreground: oklch(0.98 0.005 85);
+  --secondary: oklch(0.28 0.035 155);
+  --secondary-foreground: oklch(0.90 0.010 75);
+  --muted: oklch(0.25 0.030 155);
+  --muted-foreground: oklch(0.65 0.015 155);
+  --accent: oklch(0.65 0.13 45);
+  --accent-foreground: oklch(0.15 0.02 155);
+  --destructive: oklch(0.52 0.20 18);
+  --destructive-foreground: oklch(0.98 0.005 85);
+  --border: oklch(0.32 0.040 155);
+  --input: oklch(0.30 0.038 155);
+  --ring: oklch(0.65 0.13 45);
+  
+  /* Chart Tokens */
+  --chart-1: oklch(0.55 0.14 155);
+  --chart-2: oklch(0.65 0.13 45);
+  --chart-3: oklch(0.60 0.12 150);
+  --chart-4: oklch(0.68 0.12 48);
+  --chart-5: oklch(0.58 0.10 160);
+  
+  /* Sidebar Tokens */
+  --sidebar: oklch(0.14 0.022 155);
+  --sidebar-foreground: oklch(0.88 0.012 75);
+  --sidebar-primary: oklch(0.65 0.13 45);
+  --sidebar-primary-foreground: oklch(0.15 0.02 155);
+  --sidebar-accent: oklch(0.45 0.13 155);
+  --sidebar-accent-foreground: oklch(0.98 0.005 85);
+  --sidebar-border: oklch(0.22 0.030 155);
+  --sidebar-ring: oklch(0.65 0.13 45);
+}
+
+@theme inline {
+  /* Shadcn Core Mapping */
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+
+  /* Charts Mapping */
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+
+  /* Sidebar Mapping */
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+
+  /* Typography */
+  --font-sans: var(--font-sans);
+  --font-mono: var(--font-mono);
+
+  /* Radius */
+  --radius-lg: var(--radius);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-xl: calc(var(--radius) + 4px);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+
+  html {
+    @apply scroll-smooth antialiased;
+    direction: rtl;
+  }
+
+  body {
+    @apply bg-background text-foreground font-sans min-h-screen;
+    font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+    direction: rtl;
+    font-family: 'Cairo', 'Tajawal', -apple-system, sans-serif;
+    font-size: 16px;
+    line-height: 1.7;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-semibold tracking-tight;
+  }
+
+  code, pre {
+    @apply font-mono;
+  }
+
+  ::selection {
+    @apply bg-primary/20 text-primary;
+  }
+
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  ::-webkit-scrollbar-track {
+    @apply bg-transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    @apply bg-muted-foreground/20 rounded-full hover:bg-muted-foreground/40;
+  }
+}

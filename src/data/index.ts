@@ -1,0 +1,170 @@
+import {
+  BookOpen,
+  Trophy,
+  HandHeart,
+  GraduationCap,
+} from 'lucide-react';
+
+import { StatItem, ServiceCard, GalleryImage, Winner, NewsItem, FAQItem } from '@/lib/index';
+
+export const STATS: StatItem[] = [
+  { value: '10,000', label: 'متسابق في آخر عام', suffix: '+' },
+  { value: '1,800', label: 'فائز من الأعوام السابقة', suffix: '+' },
+  { value: '22', label: 'فعالية', suffix: '+' },
+  { value: '8', label: 'أعوام متتالية للمسابقة', suffix: '+' },
+];
+
+export const SERVICES: ServiceCard[] = [
+  {
+    icon: '📖',
+    title: 'تحفيظ القرآن الكريم',
+    description: 'برامج ومبادرات تهدف إلى ربط الأطفال والشباب بكتاب الله من خلال الحفظ والمراجعة والتشجيع المستمر.',
+  },
+  {
+    icon: '🏆',
+    title: 'مسابقة آل سبكي للقرآن الكريم',
+    description: 'مسابقة قرآنية سنوية على مستويات متعددة حتى عمر 18 عامًا، مع تكريم الفائزين في حفل ختامي كبير.',
+  },
+  {
+    icon: '🎙️',
+    title: 'مسابقة وَرتِّل لأجمل أداء صوتي',
+    description: 'مبادرة لاكتشاف المواهب الصوتية في تلاوة القرآن وصقل مهارات الأداء وحسن الترتيل.',
+  },
+  {
+    icon: '🕌',
+    title: 'أكاديمية القرآن والعلوم الشرعية',
+    description: 'مسار تعليمي مخصص لتحفيظ القرآن وتعليم علومه للأطفال والشباب وتعزيز القيم داخل المجتمع.',
+  },
+  {
+    icon: '🤝',
+    title: 'خدمة المجتمع',
+    description: 'مبادرات خيرية ومجتمعية تهدف إلى تقديم الدعم والمساندة للأسر وتعزيز روح التكافل.',
+  },
+  {
+    icon: '💚',
+    title: 'التطوع والمشاركة',
+    description: 'فتح الباب أمام المتطوعين للمساهمة في تنظيم الفعاليات وخدمة القرآن والمجتمع بصورة منظمة.',
+  },
+];
+
+export const GALLERY_IMAGES: GalleryImage[] = [
+  { src: '/images/islamic_charity_community_event_award_ce_10.jpeg', alt: 'فعاليات قرآنية', category: 'فعاليات قرآنية' },
+  { src: '/images/quran_children_learning_memorization_mos_1.jpeg', alt: 'أنشطة تحفيظ القرآن', category: 'أنشطة تحفيظ القرآن' },
+  { src: '/images/islamic_charity_community_event_award_ce_2.jpeg', alt: 'تكريم الفائزين', category: 'تكريم الفائزين' },
+  { src: '/images/quran_children_learning_memorization_mos_4.jpeg', alt: 'مسابقات الأطفال', category: 'مسابقات الأطفال' },
+  { src: '/images/islamic_charity_community_event_award_ce_5.jpeg', alt: 'مبادرات خيرية', category: 'مبادرات خيرية' },
+  { src: '/images/islamic_charity_community_event_award_ce_6.jpeg', alt: 'لقاءات المؤسسة', category: 'لقاءات المؤسسة' },
+];
+
+export const WINNERS: Winner[] = [
+  { name: 'يُضاف اسم الفائز بعد الاعتماد', category: 'مسابقة آل سبكي', level: 'حفظ القرآن كاملًا مجودًا', year: 2026, rank: 'المركز الأول' },
+  { name: 'يُضاف اسم الفائز بعد الاعتماد', category: 'مسابقة آل سبكي', level: 'ثلاثة أرباع القرآن الكريم', year: 2026, rank: 'المركز الأول' },
+  { name: 'يُضاف اسم الفائز بعد الاعتماد', category: 'مسابقة آل سبكي', level: 'النصف الأخير من القرآن الكريم', year: 2026, rank: 'المركز الأول' },
+  { name: 'يُضاف اسم الفائز بعد الاعتماد', category: 'مسابقة آل سبكي', level: 'الربع الأخير من القرآن الكريم', year: 2026, rank: 'المركز الأول' },
+  { name: 'يُضاف اسم الفائز بعد الاعتماد', category: 'مسابقة آل سبكي', level: 'حفظ 5 أجزاء', year: 2026, rank: 'المركز الأول' },
+  { name: 'يُضاف اسم الفائز بعد الاعتماد', category: 'مسابقة آل سبكي', level: 'حفظ 3 أجزاء', year: 2026, rank: 'المركز الأول' },
+  { name: 'يُضاف اسم الفائز بعد الاعتماد', category: 'مسابقة وَرتِّل', level: 'أجمل أداء صوتي', year: 2026, rank: 'المركز الأول' },
+];
+
+export const NEWS: NewsItem[] = [
+  {
+    title: 'انطلاق مسابقة آل سبكي للقرآن الكريم في عامها التاسع',
+    date: '2026',
+    excerpt: 'تعود مسابقة آل سبكي للقرآن الكريم في عامها التاسع لتشجيع حفظة كتاب الله وتكريم المتميزين.',
+    image: '/images/islamic_charity_community_event_award_ce_2.jpeg',
+  },
+  {
+    title: 'مسابقة وَرتِّل لأجمل أداء صوتي',
+    date: '2026',
+    excerpt: 'مسابقة تهتم بجمال التلاوة وإتقان الأداء واكتشاف المواهب الصوتية في قراءة القرآن الكريم.',
+    image: '/images/quran_children_learning_memorization_mos_3.jpeg',
+  },
+  {
+    title: 'أكاديمية القرآن والعلوم الشرعية',
+    date: 'قريبًا',
+    excerpt: 'مسار تعليمي يخدم تحفيظ القرآن وتعليم علومه للأطفال والشباب وتعزيز القيم في المجتمع.',
+    image: '/images/quran_children_learning_memorization_mos_1.jpeg',
+  },
+];
+
+export const FAQ: FAQItem[] = [
+  {
+    question: 'ما هي مسابقة آل سبكي للقرآن الكريم؟',
+    answer: 'هي مسابقة قرآنية سنوية على مستويات متعددة تهدف إلى تشجيع حفظة كتاب الله وتكريم الفائزين بجوائز قيّمة في الحفل الختامي.',
+  },
+  {
+    question: 'ما مستويات مسابقة آل سبكي؟',
+    answer: 'تشمل المستويات: حفظ 3 أجزاء، حفظ 5 أجزاء، الربع الأخير، النصف الأخير، ثلاثة أرباع القرآن، والقرآن الكريم كاملًا مجودًا.',
+  },
+  {
+    question: 'هل المسابقة متاحة لكل المحافظات؟',
+    answer: 'حسب الشروط الرسمية: مستوى القرآن الكريم كاملًا على مستوى جمهورية مصر العربية، وباقي المستويات لأبناء محافظة الدقهلية.',
+  },
+  {
+    question: 'كيف يتم الاستعلام عن المسابقة؟',
+    answer: 'يمكن إدخال الرقم القومي للاستعلام عن موعد ومكان المسابقة أو الدخول إلى الاختبار الإلكتروني والنتائج بعد انتهاء الاختبار.',
+  },
+  {
+    question: 'ما هي مسابقة وَرتِّل؟',
+    answer: 'مسابقة متخصصة في أجمل أداء صوتي للتلاوة، وتهدف إلى اكتشاف المواهب الصوتية وصقل مهارات الترتيل والتجويد.',
+  },
+  {
+    question: 'كيف أتواصل مع المؤسسة؟',
+    answer: 'يمكن التواصل من خلال نموذج التواصل بالموقع أو عبر القنوات الرسمية للمؤسسة على فيسبوك وإنستجرام وواتساب.',
+  },
+];
+
+export const BOARD_MEMBERS = [
+  {
+    name: 'إدارة مؤسسة حسن السبكي الخيرية',
+    role: 'الإشراف العام',
+    bio: 'فريق عمل مسؤول عن إدارة برامج المؤسسة والمسابقات والفعاليات بما يخدم القرآن الكريم والمجتمع.',
+    image: '/images/islamic_charity_community_event_award_ce_3.jpeg',
+  },
+  {
+    name: 'اللجنة المنظمة للمسابقة',
+    role: 'تنظيم المسابقات والاختبارات',
+    bio: 'لجنة تهتم بتنظيم التسجيل، متابعة المتسابقين، ترتيب الاختبارات، والإعداد لحفل التكريم.',
+    image: '/images/islamic_charity_community_event_award_ce_7.jpeg',
+  },
+  {
+    name: 'اللجنة العلمية والتحكيمية',
+    role: 'التقييم والتحكيم',
+    bio: 'مختصون في القرآن الكريم والتجويد لمراجعة مستويات المتسابقين وتقييم الأداء وفق ضوابط واضحة.',
+    image: '/images/islamic_charity_community_event_award_ce_9.jpeg',
+  },
+];
+
+export const PARTNERS = [
+  { name: 'مكان لإضافة شعار شريك رسمي', logo: '/images/islamic_geometric_pattern_gold_green_bac_7.jpeg' },
+  { name: 'مكان لإضافة راعي المسابقة', logo: '/images/islamic_geometric_pattern_gold_green_bac_8.jpeg' },
+  { name: 'مكان لإضافة داعم مجتمعي', logo: '/images/islamic_geometric_pattern_gold_green_bac_9.jpeg' },
+  { name: 'مكان لإضافة جهة تعاون', logo: '/images/islamic_geometric_pattern_gold_green_bac_10.jpeg' },
+];
+
+export const DONATION_TYPES = [
+  {
+    icon: BookOpen,
+    title: 'دعم تحفيظ القرآن',
+    description: 'مساهمة لدعم حلقات التحفيظ والمراجعة والأنشطة التعليمية المرتبطة بالقرآن الكريم.',
+    amount: 'حسب المتاح',
+  },
+  {
+    icon: Trophy,
+    title: 'دعم مسابقات القرآن',
+    description: 'مساهمة في تنظيم الاختبارات والفعاليات وحفل التكريم والجوائز المعتمدة.',
+    amount: 'حسب المتاح',
+  },
+  {
+    icon: HandHeart,
+    title: 'دعم الأسر والمبادرات',
+    description: 'مساهمة في الأنشطة الخيرية والمجتمعية التي تقدم الدعم والمساندة للأسر.',
+    amount: 'حسب المتاح',
+  },
+  {
+    icon: GraduationCap,
+    title: 'دعم الأنشطة التعليمية',
+    description: 'مساهمة في البرامج التعليمية والتربوية التي تعزز القيم والارتباط بكتاب الله.',
+    amount: 'حسب المتاح',
+  },
+];
