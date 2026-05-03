@@ -12,34 +12,82 @@ import { Layout, IslamicPattern, GoldDivider } from '@/components/Layout';
 
 type Lang = 'ar' | 'en';
 
+const LANGUAGE_STORAGE_KEY = 'site_language';
+
+function getSavedLanguage(): Lang {
+  if (typeof window === 'undefined') return 'ar';
+
+  const saved = localStorage.getItem(LANGUAGE_STORAGE_KEY) || localStorage.getItem('lang');
+
+  if (saved === 'ar' || saved === 'en') return saved;
+
+  return document.documentElement.lang === 'en' ? 'en' : 'ar';
+}
+
 function useCurrentLanguage() {
-  const [lang, setLang] = useState<Lang>(
-    document.documentElement.lang === 'en' ? 'en' : 'ar'
-  );
+  const [lang, setLang] = useState<Lang>(() => getSavedLanguage());
 
   useEffect(() => {
     const updateLang = () => {
-      setLang(document.documentElement.lang === 'en' ? 'en' : 'ar');
+      setLang(getSavedLanguage());
     };
 
     updateLang();
 
-    const observer = new MutationObserver(updateLang);
+    const observer = new MutationObserver(() => {
+      setLang(document.documentElement.lang === 'en' ? 'en' : 'ar');
+    });
+
     observer.observe(document.documentElement, {
       attributes: true,
       attributeFilter: ['lang'],
     });
 
-    return () => observer.disconnect();
+    window.addEventListener('site-language-change', updateLang);
+    window.addEventListener('storage', updateLang);
+
+    return () => {
+      observer.disconnect();
+      window.removeEventListener('site-language-change', updateLang);
+      window.removeEventListener('storage', updateLang);
+    };
   }, []);
 
   return lang;
+}
+
+function setMeta(name: string, content: string) {
+  let meta = document.querySelector(`meta[name="${name}"]`) as HTMLMetaElement | null;
+
+  if (!meta) {
+    meta = document.createElement('meta');
+    meta.setAttribute('name', name);
+    document.head.appendChild(meta);
+  }
+
+  meta.setAttribute('content', content);
+}
+
+function setPropertyMeta(property: string, content: string) {
+  let meta = document.querySelector(`meta[property="${property}"]`) as HTMLMetaElement | null;
+
+  if (!meta) {
+    meta = document.createElement('meta');
+    meta.setAttribute('property', property);
+    document.head.appendChild(meta);
+  }
+
+  meta.setAttribute('content', content);
 }
 
 const content = {
   ar: {
     dir: 'rtl' as const,
     title: 'سياسة الخصوصية | مؤسسة حسن إبراهيم السبكي الخيرية',
+    description:
+      'سياسة الخصوصية الخاصة بمؤسسة حسن إبراهيم السبكي الخيرية، وكيفية جمع واستخدام وحماية بيانات المشاركين والمتواصلين في مسابقات القرآن وخدمات المؤسسة.',
+    keywords:
+      'سياسة الخصوصية, مؤسسة حسن السبكي, بيانات المشاركين, حماية البيانات, مسابقات القرآن, مؤسسة خيرية, خصوصية المستخدم',
     heroTitle: 'سياسة الخصوصية',
     heroSubtitle:
       'نحترم خصوصيتك ونلتزم بحماية البيانات التي يتم تقديمها عند التسجيل أو التواصل معنا.',
@@ -90,6 +138,10 @@ const content = {
   en: {
     dir: 'ltr' as const,
     title: 'Privacy Policy | Hassan Ibrahim Al Sobky Charity Foundation',
+    description:
+      'Privacy Policy of Hassan Ibrahim Al Sobky Charity Foundation, explaining how participant and contact data is collected, used, stored, and protected.',
+    keywords:
+      'privacy policy, Hassan Al Sobky Charity, participant data, data protection, Quran competitions, charity foundation privacy',
     heroTitle: 'Privacy Policy',
     heroSubtitle:
       'We respect your privacy and are committed to protecting the information you provide when registering or contacting us.',
@@ -146,26 +198,47 @@ export default function Privacy() {
 
   useEffect(() => {
     document.title = t.title;
+    document.documentElement.lang = lang;
+    document.documentElement.dir = t.dir;
+
+    setMeta('description', t.description);
+    setMeta('keywords', t.keywords);
+    setMeta('robots', 'index, follow, max-image-preview:large');
+
+    setPropertyMeta('og:title', t.title);
+    setPropertyMeta('og:description', t.description);
+    setPropertyMeta('og:type', 'website');
+    setPropertyMeta('og:locale', isArabic ? 'ar_EG' : 'en_US');
+    setPropertyMeta('og:image', `${window.location.origin}/images/logo.jpg`);
+
+    setMeta('twitter:card', 'summary_large_image');
+    setMeta('twitter:title', t.title);
+    setMeta('twitter:description', t.description);
+    setMeta('twitter:image', `${window.location.origin}/images/logo.jpg`);
+
     window.scrollTo({ top: 0 });
-  }, [t.title]);
+  }, [isArabic, lang, t.description, t.dir, t.keywords, t.title]);
 
   return (
     <Layout>
-      <section className="relative overflow-hidden bg-primary pb-16 pt-44" dir={t.dir}>
+      <section
+        className="relative overflow-hidden bg-primary pb-14 pt-28 dark:bg-slate-950 sm:pb-16 sm:pt-32 lg:pb-20 lg:pt-40"
+        dir={t.dir}
+      >
         <div className="absolute inset-0 opacity-10">
           <IslamicPattern className="h-full w-full text-accent" />
         </div>
 
-        <div className="absolute -right-24 top-16 h-72 w-72 rounded-full bg-accent/20 blur-3xl" />
-        <div className="absolute -left-24 bottom-0 h-72 w-72 rounded-full bg-white/10 blur-3xl" />
+        <div className="absolute -right-24 top-16 h-56 w-56 rounded-full bg-accent/20 blur-3xl sm:h-72 sm:w-72" />
+        <div className="absolute -left-24 bottom-0 h-56 w-56 rounded-full bg-white/10 blur-3xl sm:h-72 sm:w-72" />
 
-        <div className="relative z-10 mx-auto max-w-4xl px-4 text-center sm:px-6">
+        <div className="relative z-10 mx-auto max-w-4xl px-4 text-center sm:px-6 lg:px-8">
           <GoldDivider />
 
           <motion.h1
             initial={{ opacity: 0, y: 22 }}
             animate={{ opacity: 1, y: 0 }}
-            className="mb-3 mt-4 text-4xl font-black text-white md:text-5xl"
+            className="mb-3 mt-4 text-3xl font-black leading-tight text-white sm:text-4xl md:text-5xl lg:text-6xl"
             style={{ fontFamily: "'Cairo', sans-serif" }}
           >
             {t.heroTitle}
@@ -175,7 +248,7 @@ export default function Privacy() {
             initial={{ opacity: 0, y: 18 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.12 }}
-            className="mx-auto max-w-2xl text-sm leading-7 text-white/75 md:text-base"
+            className="mx-auto max-w-2xl text-sm leading-7 text-white/75 sm:text-base md:text-lg"
             style={{ fontFamily: "'Cairo', sans-serif" }}
           >
             {t.heroSubtitle}
@@ -183,15 +256,15 @@ export default function Privacy() {
         </div>
       </section>
 
-      <section className="bg-background py-20 dark:bg-slate-950" dir={t.dir}>
-        <div className="mx-auto max-w-5xl px-4 sm:px-6">
+      <section className="bg-background py-14 dark:bg-slate-950 sm:py-16 lg:py-20" dir={t.dir}>
+        <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8">
           <div
-            className={`mb-8 rounded-3xl border border-primary/10 bg-white p-6 shadow-sm dark:border-white/10 dark:bg-white/10 ${
+            className={`mb-8 rounded-3xl border border-primary/10 bg-white p-5 shadow-sm dark:border-white/10 dark:bg-white/10 sm:p-6 ${
               isArabic ? 'text-right' : 'text-left'
             }`}
           >
             <p
-              className="text-sm leading-8 text-muted-foreground dark:text-white/70 md:text-base"
+              className="text-sm leading-8 text-muted-foreground dark:text-white/70 sm:text-base"
               style={{ fontFamily: "'Cairo', sans-serif" }}
             >
               {t.intro}
@@ -209,17 +282,17 @@ export default function Privacy() {
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ delay: i * 0.06 }}
-                  className={`rounded-3xl border border-primary/10 bg-white p-6 shadow-sm transition-all hover:-translate-y-1 hover:shadow-xl dark:border-white/10 dark:bg-white/10 ${
+                  className={`rounded-3xl border border-primary/10 bg-white p-5 shadow-sm transition-all hover:-translate-y-1 hover:shadow-xl dark:border-white/10 dark:bg-white/10 sm:p-6 ${
                     isArabic ? 'text-right' : 'text-left'
                   }`}
                 >
-                  <div className="mb-4 flex items-center gap-3">
+                  <div className="mb-4 flex items-start gap-3">
                     <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-[#279782]/10 text-[#279782] dark:bg-white/10 dark:text-[#f69e12]">
                       <Icon size={25} />
                     </div>
 
                     <h2
-                      className="text-lg font-black text-primary dark:text-white"
+                      className="pt-2 text-base font-black leading-7 text-primary dark:text-white sm:text-lg"
                       style={{ fontFamily: "'Cairo', sans-serif" }}
                     >
                       {section.title}
@@ -237,7 +310,7 @@ export default function Privacy() {
             })}
           </div>
 
-          <div className="mt-8 rounded-3xl border border-[#f69e12]/20 bg-[#f69e12]/10 p-5 text-center">
+          <div className="mt-8 rounded-3xl border border-[#f69e12]/20 bg-[#f69e12]/10 p-5 text-center shadow-sm">
             <p
               className="text-xs font-bold text-[#f69e12]"
               style={{ fontFamily: "'Cairo', sans-serif" }}
@@ -247,11 +320,13 @@ export default function Privacy() {
 
             <a
               href={`mailto:${t.email}`}
-              className="mt-2 inline-flex items-center gap-2 text-xs font-black text-primary transition-colors hover:text-[#f69e12] dark:text-white"
+              className="mt-3 inline-flex min-h-[40px] max-w-full items-center justify-center gap-2 break-all rounded-full bg-white/70 px-4 py-2 text-xs font-black text-primary transition-colors hover:text-[#f69e12] dark:bg-white/10 dark:text-white"
               style={{ fontFamily: "'Cairo', sans-serif" }}
             >
-              <Mail size={15} />
-              {t.contactLabel}: {t.email}
+              <Mail size={15} className="shrink-0" />
+              <span>
+                {t.contactLabel}: {t.email}
+              </span>
             </a>
           </div>
         </div>

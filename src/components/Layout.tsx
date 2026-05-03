@@ -7,7 +7,7 @@ import {
   ChevronDown,
   Sun,
   Moon,
-  Languages,
+  Globe2,
   Phone,
   Mail,
   MapPin,
@@ -17,7 +17,6 @@ import {
   Trophy,
   Image,
   HandHeart,
-  Award,
   FileText,
   ShieldCheck,
   MessageCircle,
@@ -26,22 +25,140 @@ import { ROUTE_PATHS } from '@/lib/index';
 import { useScrolled } from '@/hooks/index';
 
 type ThemeMode = 'dark' | 'light';
+type Lang = 'ar' | 'en';
 
 const THEME_STORAGE_KEY = 'site_theme';
+const LANGUAGE_STORAGE_KEY = 'site_language';
+
+const MAIN_WHATSAPP_NUMBER = '201153637371';
+const DEVELOPER_WHATSAPP_NUMBER = '201008454029';
+
+const safeRoutes = ROUTE_PATHS as Record<string, string>;
+
+const routes = {
+  home: safeRoutes.HOME || '/',
+  about: safeRoutes.ABOUT || '/about',
+  services: safeRoutes.SERVICES || '/services',
+  competitions: safeRoutes.COMPETITIONS || '/competitions',
+  gallery: safeRoutes.GALLERY || '/gallery',
+  donations: safeRoutes.DONATIONS || '/donations',
+  contact: safeRoutes.CONTACT || '/contact',
+  privacy: safeRoutes.PRIVACY || '/privacy',
+  terms: safeRoutes.TERMS || '/terms',
+};
+
+const text = {
+  ar: {
+    dir: 'rtl' as const,
+    logoTitle: 'مؤسسة حسن إبراهيم السبكي',
+    logoSubtitle: 'للقرآن الكريم وخدمة المجتمع',
+    home: 'الرئيسية',
+    about: 'عن المؤسسة',
+    services: 'خدماتنا',
+    competitions: 'المسابقات',
+    gallery: 'معرض الصور',
+    donations: 'الدعم والتبرعات',
+    contact: 'تواصل معنا',
+    privacy: 'سياسة الخصوصية',
+    terms: 'الشروط والأحكام',
+    register: 'التسجيل الرسمي',
+    darkMode: 'الوضع الليلي',
+    lightMode: 'الوضع النهاري',
+    languageSwitch: 'English',
+    footerPages: 'صفحات الموقع',
+    footerContact: 'تواصل معنا',
+    footerText:
+      'مؤسسة حسن إبراهيم السبكي الخيرية لخدمة القرآن الكريم والمجتمع من خلال برامج التحفيظ والمسابقات القرآنية والمبادرات الخيرية.',
+    phone: '01153637371',
+    country: 'مصر',
+    whatsapp: 'تواصل واتساب',
+    rights: 'جميع الحقوق محفوظة © 2026 مؤسسة حسن إبراهيم السبكي الخيرية',
+    developer: 'تم البرمجة بواسطة المهندس عمرو خالد',
+    developerContact: 'للتواصل',
+    backToTop: 'العودة للأعلى',
+    loadingTitle: 'مؤسسة حسن إبراهيم السبكي الخيرية',
+    loadingSubtitle: 'للقرآن الكريم وخدمة المجتمع',
+    menu: 'القائمة',
+    closeMenu: 'إغلاق القائمة',
+  },
+  en: {
+    dir: 'ltr' as const,
+    logoTitle: 'Hassan Ibrahim Al Sobky',
+    logoSubtitle: 'For Quran & Community Service',
+    home: 'Home',
+    about: 'About',
+    services: 'Services',
+    competitions: 'Competitions',
+    gallery: 'Gallery',
+    donations: 'Donations',
+    contact: 'Contact Us',
+    privacy: 'Privacy Policy',
+    terms: 'Terms & Conditions',
+    register: 'Official Registration',
+    darkMode: 'Dark Mode',
+    lightMode: 'Light Mode',
+    languageSwitch: 'العربية',
+    footerPages: 'Website Pages',
+    footerContact: 'Contact Us',
+    footerText:
+      'Hassan Ibrahim Al Sobky Charity Foundation serves the Quran and the community through memorization programs, Quran competitions, and charitable initiatives.',
+    phone: '+20 11 53637371',
+    country: 'Egypt',
+    whatsapp: 'WhatsApp Contact',
+    rights: 'All rights reserved © 2026 Hassan Ibrahim Al Sobky Charity Foundation',
+    developer: 'Developed by Eng. Amr Khaled',
+    developerContact: 'Contact',
+    backToTop: 'Back to top',
+    loadingTitle: 'Hassan Ibrahim Al Sobky Charity Foundation',
+    loadingSubtitle: 'For Quran & Community Service',
+    menu: 'Menu',
+    closeMenu: 'Close menu',
+  },
+};
 
 function getSavedTheme(): ThemeMode {
+  if (typeof window === 'undefined') return 'light';
+
   const saved = localStorage.getItem(THEME_STORAGE_KEY) || localStorage.getItem('theme');
   return saved === 'dark' ? 'dark' : 'light';
+}
+
+function getSavedLanguage(): Lang {
+  if (typeof window === 'undefined') return 'ar';
+
+  const saved = localStorage.getItem(LANGUAGE_STORAGE_KEY) || localStorage.getItem('lang');
+
+  if (saved === 'en' || saved === 'ar') return saved;
+
+  return document.documentElement.lang === 'en' ? 'en' : 'ar';
 }
 
 function applyTheme(theme: ThemeMode) {
   document.documentElement.classList.toggle('dark', theme === 'dark');
   document.documentElement.classList.toggle('light', theme === 'light');
   document.body.classList.toggle('dark', theme === 'dark');
+
   document.documentElement.setAttribute('data-theme', theme);
   document.body.setAttribute('data-theme', theme);
+
   localStorage.setItem(THEME_STORAGE_KEY, theme);
   localStorage.setItem('theme', theme);
+}
+
+function applyLanguage(lang: Lang) {
+  document.documentElement.lang = lang;
+  document.documentElement.dir = lang === 'ar' ? 'rtl' : 'ltr';
+  document.body.dir = lang === 'ar' ? 'rtl' : 'ltr';
+
+  localStorage.setItem(LANGUAGE_STORAGE_KEY, lang);
+  localStorage.setItem('lang', lang);
+
+  window.dispatchEvent(new Event('site-language-change'));
+}
+
+function getWhatsAppLink(number: string, message?: string) {
+  const encodedMessage = message ? `?text=${encodeURIComponent(message)}` : '';
+  return `https://wa.me/${number}${encodedMessage}`;
 }
 
 function FacebookIcon() {
@@ -76,28 +193,33 @@ type NavItem = {
   icon: React.ElementType;
 };
 
-const HEADER_NAV_ITEMS: NavItem[] = [
-  { label: 'الرئيسية', path: ROUTE_PATHS.HOME, icon: Home },
-  { label: 'عن المؤسسة', path: ROUTE_PATHS.ABOUT, icon: Info },
-  { label: 'خدماتنا', path: ROUTE_PATHS.SERVICES, icon: BookOpen },
-  { label: 'المسابقات', path: ROUTE_PATHS.COMPETITIONS, icon: Trophy },
-  { label: 'تواصل معنا', path: ROUTE_PATHS.CONTACT, icon: MessageCircle },
-];
+type TextContent = (typeof text)[keyof typeof text];
 
-const ALL_NAV_ITEMS: NavItem[] = [
-  { label: 'الرئيسية', path: ROUTE_PATHS.HOME, icon: Home },
-  { label: 'عن المؤسسة', path: ROUTE_PATHS.ABOUT, icon: Info },
-  { label: 'خدماتنا', path: ROUTE_PATHS.SERVICES, icon: BookOpen },
-  { label: 'المسابقات', path: ROUTE_PATHS.COMPETITIONS, icon: Trophy },
-  { label: 'معرض الصور', path: ROUTE_PATHS.GALLERY, icon: Image },
-  { label: 'الدعم والتبرعات', path: ROUTE_PATHS.DONATIONS, icon: HandHeart },
-  { label: 'تواصل معنا', path: ROUTE_PATHS.CONTACT, icon: MessageCircle },
-];
+function getHeaderNavItems(t: TextContent): NavItem[] {  return [
+    { label: t.home, path: routes.home, icon: Home },
+    { label: t.about, path: routes.about, icon: Info },
+    { label: t.services, path: routes.services, icon: BookOpen },
+    { label: t.competitions, path: routes.competitions, icon: Trophy },
+    { label: t.contact, path: routes.contact, icon: MessageCircle },
+  ];
+}
 
-const LEGAL_NAV_ITEMS: NavItem[] = [
-  { label: 'سياسة الخصوصية', path: ROUTE_PATHS.PRIVACY || '/privacy', icon: ShieldCheck },
-  { label: 'الشروط والأحكام', path: ROUTE_PATHS.TERMS || '/terms', icon: FileText },
-];
+function getAllNavItems(t: TextContent): NavItem[] {  return [
+    { label: t.home, path: routes.home, icon: Home },
+    { label: t.about, path: routes.about, icon: Info },
+    { label: t.services, path: routes.services, icon: BookOpen },
+    { label: t.competitions, path: routes.competitions, icon: Trophy },
+    { label: t.gallery, path: routes.gallery, icon: Image },
+    { label: t.donations, path: routes.donations, icon: HandHeart },
+    { label: t.contact, path: routes.contact, icon: MessageCircle },
+  ];
+}
+
+function getLegalNavItems(t: TextContent): NavItem[] {  return [
+    { label: t.privacy, path: routes.privacy, icon: ShieldCheck },
+    { label: t.terms, path: routes.terms, icon: FileText },
+  ];
+}
 
 export function IslamicPattern({ className = '' }: { className?: string }) {
   return (
@@ -136,10 +258,11 @@ export function SectionTitle({
   light?: boolean;
 }) {
   return (
-    <div className="mb-12 text-center">
+    <div className="mb-10 text-center sm:mb-12">
       <GoldDivider />
+
       <h2
-        className={`mb-3 mt-4 text-3xl font-bold md:text-4xl ${
+        className={`mb-3 mt-4 text-2xl font-black leading-tight sm:text-3xl md:text-4xl ${
           light ? 'text-primary-foreground' : 'text-primary dark:text-white'
         }`}
         style={{ fontFamily: "'Cairo', sans-serif" }}
@@ -149,7 +272,7 @@ export function SectionTitle({
 
       {subtitle && (
         <p
-          className={`mx-auto max-w-2xl text-base leading-relaxed md:text-lg ${
+          className={`mx-auto max-w-2xl text-sm leading-7 sm:text-base md:text-lg ${
             light ? 'text-primary-foreground/80' : 'text-muted-foreground dark:text-white/70'
           }`}
           style={{ fontFamily: "'Cairo', sans-serif" }}
@@ -162,30 +285,40 @@ export function SectionTitle({
 }
 
 export function Logo({ light = false }: { light?: boolean }) {
+  const lang = getSavedLanguage();
+  const t = text[lang];
+
   return (
-    <Link to={ROUTE_PATHS.HOME} className="group flex items-center gap-3 text-right" aria-label="العودة للصفحة الرئيسية">
+    <Link
+      to={routes.home}
+      className="group flex min-w-0 items-center gap-2 text-right sm:gap-3"
+      aria-label={lang === 'ar' ? 'العودة للصفحة الرئيسية' : 'Back to homepage'}
+      dir={t.dir}
+    >
       <div className="relative shrink-0">
         <div className="absolute inset-0 rounded-full bg-[#279782]/20 opacity-0 blur-xl transition-opacity duration-300 group-hover:opacity-100" />
 
         <img
           src="/images/logo.jpg"
-          alt="لوجو مؤسسة حسن إبراهيم السبكي الخيرية"
-          className="relative h-14 w-14 object-contain transition-all duration-300 group-hover:scale-105 sm:h-16 sm:w-16"
+          alt={lang === 'ar' ? 'لوجو مؤسسة حسن إبراهيم السبكي الخيرية' : 'Hassan Ibrahim Al Sobky Charity Foundation logo'}
+          className="relative h-11 w-11 object-contain transition-all duration-300 group-hover:scale-105 sm:h-14 sm:w-14 lg:h-16 lg:w-16"
+          loading="eager"
+          decoding="async"
         />
       </div>
 
-      <div className="hidden sm:block">
+      <div className="min-w-0">
         <div
-          className={`text-sm font-black leading-tight ${
+          className={`max-w-[155px] truncate text-xs font-black leading-tight sm:max-w-none sm:text-sm ${
             light ? 'text-white' : 'text-primary dark:text-white'
           }`}
           style={{ fontFamily: "'Cairo', sans-serif" }}
         >
-          مؤسسة حسن إبراهيم السبكي
+          {t.logoTitle}
         </div>
 
-        <div className="mt-1 text-xs font-bold text-accent" style={{ fontFamily: "'Cairo', sans-serif" }}>
-          للقرآن الكريم وخدمة المجتمع
+        <div className="mt-1 hidden text-[11px] font-bold text-accent sm:block" style={{ fontFamily: "'Cairo', sans-serif" }}>
+          {t.logoSubtitle}
         </div>
       </div>
     </Link>
@@ -193,24 +326,36 @@ export function Logo({ light = false }: { light?: boolean }) {
 }
 
 export function Header() {
-  const scrolled = useScrolled(60);
+  const scrolled = useScrolled(50);
   const location = useLocation();
 
   const [mobileOpen, setMobileOpen] = useState(false);
   const [darkMode, setDarkMode] = useState(() => getSavedTheme() === 'dark');
-  const [language, setLanguage] = useState<'ar' | 'en'>(
-    document.documentElement.lang === 'en' ? 'en' : 'ar'
-  );
+  const [language, setLanguage] = useState<Lang>(() => getSavedLanguage());
+
+  const t = text[language];
+  const isArabic = language === 'ar';
+
+  const headerNavItems = getHeaderNavItems(t);
+  const allNavItems = getAllNavItems(t);
+
+  useEffect(() => {
+    const savedTheme = getSavedTheme();
+    setDarkMode(savedTheme === 'dark');
+    applyTheme(savedTheme);
+
+    const savedLang = getSavedLanguage();
+    setLanguage(savedLang);
+    applyLanguage(savedLang);
+  }, []);
 
   useEffect(() => {
     applyTheme(darkMode ? 'dark' : 'light');
   }, [darkMode]);
 
   useEffect(() => {
-    const savedTheme = getSavedTheme();
-    setDarkMode(savedTheme === 'dark');
-    applyTheme(savedTheme);
-  }, []);
+    applyLanguage(language);
+  }, [language]);
 
   useEffect(() => {
     setMobileOpen(false);
@@ -218,15 +363,11 @@ export function Header() {
 
   useEffect(() => {
     document.body.style.overflow = mobileOpen ? 'hidden' : '';
+
     return () => {
       document.body.style.overflow = '';
     };
   }, [mobileOpen]);
-
-  useEffect(() => {
-    document.documentElement.lang = language;
-    document.documentElement.dir = language === 'ar' ? 'rtl' : 'ltr';
-  }, [language]);
 
   useEffect(() => {
     if (!location.hash) return;
@@ -242,6 +383,10 @@ export function Header() {
     return () => window.clearTimeout(timer);
   }, [location.pathname, location.hash]);
 
+  const toggleLanguage = () => {
+    setLanguage((prev) => (prev === 'ar' ? 'en' : 'ar'));
+  };
+
   const toggleButtonClass =
     scrolled || mobileOpen
       ? 'border-primary/15 bg-white text-primary hover:bg-primary hover:text-white dark:border-white/10 dark:bg-white/10 dark:text-white dark:hover:bg-white dark:hover:text-primary'
@@ -249,19 +394,19 @@ export function Header() {
 
   return (
     <header
-      dir="rtl"
+      dir={t.dir}
       className={`fixed left-0 right-0 top-0 z-50 transition-all duration-300 ${
         scrolled || mobileOpen
-          ? 'border-b border-primary/10 bg-white/92 shadow-lg backdrop-blur-xl dark:border-white/10 dark:bg-slate-950/90'
+          ? 'border-b border-primary/10 bg-white/95 shadow-lg backdrop-blur-xl dark:border-white/10 dark:bg-slate-950/92'
           : 'bg-gradient-to-b from-black/45 to-transparent'
       }`}
     >
-      <div className="mx-auto max-w-[1500px] px-4 sm:px-6 lg:px-8">
-        <div className="flex min-h-[82px] items-center justify-between gap-4 py-3">
+      <div className="mx-auto max-w-[1500px] px-3 sm:px-5 lg:px-8">
+        <div className="flex min-h-[68px] items-center justify-between gap-2 py-2 sm:min-h-[76px] sm:gap-4 lg:min-h-[82px] lg:py-3">
           <Logo light={!scrolled && !mobileOpen} />
 
           <nav className="hidden flex-1 items-center justify-center gap-1 xl:flex">
-            {HEADER_NAV_ITEMS.map((item) => (
+            {headerNavItems.map((item) => (
               <NavLink
                 key={item.path}
                 to={item.path}
@@ -281,23 +426,25 @@ export function Header() {
             ))}
           </nav>
 
-          <div className="flex shrink-0 items-center gap-2">
+          <div className="flex shrink-0 items-center gap-1.5 sm:gap-2">
             <button
               onClick={() => setDarkMode((prev) => !prev)}
-              className={`flex h-10 w-10 items-center justify-center rounded-full border transition-all ${toggleButtonClass}`}
-              aria-label="تغيير الوضع الليلي والنهاري"
+              className={`flex h-10 w-10 items-center justify-center rounded-full border transition-all sm:h-11 sm:w-11 ${toggleButtonClass}`}
+              aria-label={darkMode ? t.lightMode : t.darkMode}
             >
               {darkMode ? <Sun size={18} /> : <Moon size={18} />}
             </button>
 
             <button
-              onClick={() => setLanguage((prev) => (prev === 'ar' ? 'en' : 'ar'))}
-              className={`flex h-10 items-center gap-1 rounded-full border px-3 text-xs font-black transition-all ${toggleButtonClass}`}
+              onClick={toggleLanguage}
+              className={`flex h-10 items-center gap-1.5 rounded-full border px-3 text-xs font-black transition-all sm:h-11 sm:px-4 ${toggleButtonClass}`}
               style={{ fontFamily: "'Cairo', sans-serif" }}
-              aria-label="تغيير اللغة"
+              aria-label={language === 'ar' ? 'Switch to English' : 'التبديل إلى العربية'}
             >
-              <Languages size={16} />
-              {language === 'ar' ? 'EN' : 'AR'}
+              <Globe2 size={16} />
+              <span className="hidden xs:inline sm:inline">{t.languageSwitch}</span>
+              <span className="sm:hidden">{language === 'ar' ? 'EN' : 'AR'}</span>
+              <ChevronDown size={13} />
             </button>
 
             <a
@@ -307,19 +454,19 @@ export function Header() {
               className="hidden items-center rounded-full bg-gradient-to-l from-[#f69e12] to-[#ffb84d] px-4 py-2.5 text-xs font-black text-white shadow-lg shadow-[#f69e12]/25 transition-all duration-200 hover:-translate-y-0.5 hover:brightness-110 lg:flex"
               style={{ fontFamily: "'Cairo', sans-serif" }}
             >
-              التسجيل الرسمي
+              {t.register}
             </a>
 
             <button
-              onClick={() => setMobileOpen(!mobileOpen)}
-              className={`rounded-xl p-2 transition-all xl:hidden ${
+              onClick={() => setMobileOpen((prev) => !prev)}
+              className={`flex h-10 w-10 items-center justify-center rounded-xl transition-all xl:hidden ${
                 scrolled || mobileOpen
                   ? 'text-primary hover:bg-primary/5 dark:text-white dark:hover:bg-white/10'
                   : 'text-white hover:bg-white/10'
               }`}
-              aria-label="القائمة"
+              aria-label={mobileOpen ? t.closeMenu : t.menu}
             >
-              {mobileOpen ? <X size={26} /> : <Menu size={26} />}
+              {mobileOpen ? <X size={25} /> : <Menu size={25} />}
             </button>
           </div>
         </div>
@@ -328,39 +475,50 @@ export function Header() {
       <AnimatePresence>
         {mobileOpen && (
           <motion.div
-            initial={{ opacity: 0, x: 300 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: 300 }}
-            transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-            className="fixed inset-0 top-[82px] z-40 xl:hidden"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.18 }}
+            className="fixed inset-0 top-[68px] z-40 xl:hidden sm:top-[76px] lg:top-[82px]"
           >
-            <div className="absolute inset-0 bg-black/50" onClick={() => setMobileOpen(false)} />
+            <div className="absolute inset-0 bg-black/55 backdrop-blur-[2px]" onClick={() => setMobileOpen(false)} />
 
-            <div className="absolute right-0 top-0 h-full w-[360px] max-w-[90vw] overflow-y-auto rounded-l-3xl bg-white shadow-2xl dark:bg-slate-950" dir="rtl">
-              <div className="border-b border-border p-5 dark:border-white/10">
+            <motion.div
+              initial={{ x: isArabic ? 320 : -320 }}
+              animate={{ x: 0 }}
+              exit={{ x: isArabic ? 320 : -320 }}
+              transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+              className={`absolute top-0 h-[calc(100svh-68px)] w-[330px] max-w-[92vw] overflow-y-auto bg-white shadow-2xl dark:bg-slate-950 sm:h-[calc(100svh-76px)] lg:h-[calc(100svh-82px)] ${
+                isArabic ? 'right-0 rounded-l-3xl' : 'left-0 rounded-r-3xl'
+              }`}
+              dir={t.dir}
+            >
+              <div className="border-b border-border p-4 dark:border-white/10">
                 <Logo />
               </div>
 
-              <nav className="flex flex-col gap-2 p-5">
-                <div className="mb-3 grid grid-cols-2 gap-3">
+              <nav className="flex flex-col gap-2 p-4">
+                <div className="mb-3 grid grid-cols-2 gap-2">
                   <button
                     onClick={() => setDarkMode((prev) => !prev)}
-                    className="rounded-2xl border border-primary/15 bg-muted px-4 py-3 text-center font-black text-primary dark:border-white/10 dark:bg-white/10 dark:text-white"
+                    className="flex min-h-[48px] items-center justify-center gap-2 rounded-2xl border border-primary/15 bg-muted px-3 py-3 text-center text-xs font-black text-primary dark:border-white/10 dark:bg-white/10 dark:text-white"
                     style={{ fontFamily: "'Cairo', sans-serif" }}
                   >
-                    {darkMode ? 'الوضع النهاري' : 'الوضع الليلي'}
+                    {darkMode ? <Sun size={17} /> : <Moon size={17} />}
+                    {darkMode ? t.lightMode : t.darkMode}
                   </button>
 
                   <button
-                    onClick={() => setLanguage((prev) => (prev === 'ar' ? 'en' : 'ar'))}
-                    className="rounded-2xl border border-primary/15 bg-muted px-4 py-3 text-center font-black text-primary dark:border-white/10 dark:bg-white/10 dark:text-white"
+                    onClick={toggleLanguage}
+                    className="flex min-h-[48px] items-center justify-center gap-2 rounded-2xl border border-primary/15 bg-muted px-3 py-3 text-center text-xs font-black text-primary dark:border-white/10 dark:bg-white/10 dark:text-white"
                     style={{ fontFamily: "'Cairo', sans-serif" }}
                   >
-                    {language === 'ar' ? 'English' : 'العربية'}
+                    <Globe2 size={17} />
+                    {t.languageSwitch}
                   </button>
                 </div>
 
-                {ALL_NAV_ITEMS.map((item) => {
+                {allNavItems.map((item) => {
                   const Icon = item.icon;
 
                   return (
@@ -368,9 +526,9 @@ export function Header() {
                       key={item.path}
                       to={item.path}
                       className={({ isActive }) =>
-                        `flex items-center gap-3 rounded-2xl px-4 py-3 text-sm font-black transition-all ${
+                        `flex min-h-[48px] items-center gap-3 rounded-2xl px-4 py-3 text-sm font-black transition-all ${
                           isActive
-                            ? 'bg-primary text-primary-foreground'
+                            ? 'bg-primary text-primary-foreground shadow-md'
                             : 'text-foreground hover:bg-muted dark:text-white/85 dark:hover:bg-white/10'
                         }`
                       }
@@ -387,14 +545,30 @@ export function Header() {
                     href="https://alsobky.com/contact"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="block w-full rounded-2xl bg-gradient-to-l from-[#f69e12] to-[#ffb84d] px-4 py-3 text-center font-black text-white shadow-lg"
+                    className="block w-full rounded-2xl bg-gradient-to-l from-[#f69e12] to-[#ffb84d] px-4 py-3 text-center text-sm font-black text-white shadow-lg"
                     style={{ fontFamily: "'Cairo', sans-serif" }}
                   >
-                    التسجيل الرسمي
+                    {t.register}
+                  </a>
+
+                  <a
+                    href={getWhatsAppLink(
+                      MAIN_WHATSAPP_NUMBER,
+                      language === 'ar'
+                        ? 'السلام عليكم، أريد التواصل مع مؤسسة حسن إبراهيم السبكي الخيرية'
+                        : 'Hello, I would like to contact Hassan Ibrahim Al Sobky Charity Foundation',
+                    )}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="mt-3 flex w-full items-center justify-center gap-2 rounded-2xl bg-green-500 px-4 py-3 text-center text-sm font-black text-white shadow-lg transition-all hover:bg-green-600"
+                    style={{ fontFamily: "'Cairo', sans-serif" }}
+                  >
+                    <WhatsAppIcon size={17} />
+                    {t.whatsapp}
                   </a>
                 </div>
               </nav>
-            </div>
+            </motion.div>
           </motion.div>
         )}
       </AnimatePresence>
@@ -409,7 +583,7 @@ function FooterLink({ item }: { item: NavItem }) {
     <li>
       <NavLink
         to={item.path}
-        className="flex items-center gap-2 rounded-xl px-3 py-2 text-xs font-bold text-primary-foreground/72 transition-all hover:bg-white/10 hover:text-accent"
+        className="flex min-h-[38px] items-center gap-2 rounded-xl px-3 py-2 text-xs font-bold text-primary-foreground/72 transition-all hover:bg-white/10 hover:text-accent"
         style={{ fontFamily: "'Cairo', sans-serif" }}
       >
         <Icon size={15} />
@@ -420,8 +594,22 @@ function FooterLink({ item }: { item: NavItem }) {
 }
 
 export function Footer() {
+  const [language, setLanguage] = useState<Lang>(() => getSavedLanguage());
+
+  useEffect(() => {
+    const updateLanguage = () => setLanguage(getSavedLanguage());
+
+    window.addEventListener('site-language-change', updateLanguage);
+
+    return () => window.removeEventListener('site-language-change', updateLanguage);
+  }, []);
+
+  const t = text[language];
+  const allNavItems = getAllNavItems(t);
+  const legalNavItems = getLegalNavItems(t);
+
   return (
-    <footer className="relative overflow-hidden bg-primary text-primary-foreground" dir="rtl">
+    <footer className="relative overflow-hidden bg-primary text-primary-foreground" dir={t.dir}>
       <div className="absolute inset-0 opacity-[0.035]">
         <IslamicPattern className="h-full w-full text-accent" />
       </div>
@@ -432,24 +620,47 @@ export function Footer() {
             <Logo light />
 
             <p className="mt-4 max-w-md text-sm leading-7 text-primary-foreground/72" style={{ fontFamily: "'Cairo', sans-serif" }}>
-              مؤسسة حسن إبراهيم السبكي الخيرية لخدمة القرآن الكريم والمجتمع من خلال
-              برامج التحفيظ والمسابقات القرآنية والمبادرات الخيرية.
+              {t.footerText}
             </p>
 
             <div className="mt-5 flex flex-wrap gap-2">
-              <a href="https://www.facebook.com/profile.php?id=61589030337086" target="_blank" rel="noopener noreferrer" className="flex h-10 w-10 items-center justify-center rounded-full bg-white/10 text-white transition-all hover:-translate-y-1 hover:bg-[#1877F2]" aria-label="Facebook">
+              <a
+                href="https://www.facebook.com/profile.php?id=61589030337086"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex h-10 w-10 items-center justify-center rounded-full bg-white/10 text-white transition-all hover:-translate-y-1 hover:bg-[#1877F2]"
+                aria-label="Facebook"
+              >
                 <FacebookIcon />
               </a>
 
-              <a href="https://www.facebook.com/alsobkiquran" target="_blank" rel="noopener noreferrer" className="flex h-10 w-10 items-center justify-center rounded-full bg-white/10 text-white transition-all hover:-translate-y-1 hover:bg-[#1877F2]" aria-label="Facebook Quran">
+              <a
+                href="https://www.facebook.com/alsobkiquran"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex h-10 w-10 items-center justify-center rounded-full bg-white/10 text-white transition-all hover:-translate-y-1 hover:bg-[#1877F2]"
+                aria-label="Facebook Quran"
+              >
                 <FacebookIcon />
               </a>
 
-              <a href="https://www.instagram.com/alsobki_charity" target="_blank" rel="noopener noreferrer" className="flex h-10 w-10 items-center justify-center rounded-full bg-white/10 text-white transition-all hover:-translate-y-1 hover:bg-[#E4405F]" aria-label="Instagram">
+              <a
+                href="https://www.instagram.com/alsobki_charity"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex h-10 w-10 items-center justify-center rounded-full bg-white/10 text-white transition-all hover:-translate-y-1 hover:bg-[#E4405F]"
+                aria-label="Instagram"
+              >
                 <InstagramIcon />
               </a>
 
-              <a href="https://wa.me/200502570086" target="_blank" rel="noopener noreferrer" className="flex h-10 w-10 items-center justify-center rounded-full bg-green-500 text-white transition-all hover:-translate-y-1 hover:bg-green-600" aria-label="WhatsApp">
+              <a
+                href={getWhatsAppLink(MAIN_WHATSAPP_NUMBER)}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex h-10 w-10 items-center justify-center rounded-full bg-green-500 text-white transition-all hover:-translate-y-1 hover:bg-green-600"
+                aria-label="WhatsApp"
+              >
                 <WhatsAppIcon />
               </a>
             </div>
@@ -457,15 +668,15 @@ export function Footer() {
 
           <div>
             <h3 className="mb-4 text-sm font-black text-accent" style={{ fontFamily: "'Cairo', sans-serif" }}>
-              صفحات الموقع
+              {t.footerPages}
             </h3>
 
             <ul className="grid grid-cols-1 gap-1 sm:grid-cols-2">
-              {ALL_NAV_ITEMS.map((item) => (
+              {allNavItems.map((item) => (
                 <FooterLink key={item.path} item={item} />
               ))}
 
-              {LEGAL_NAV_ITEMS.map((item) => (
+              {legalNavItems.map((item) => (
                 <FooterLink key={item.path} item={item} />
               ))}
             </ul>
@@ -473,37 +684,44 @@ export function Footer() {
 
           <div>
             <h3 className="mb-4 text-sm font-black text-accent" style={{ fontFamily: "'Cairo', sans-serif" }}>
-              تواصل معنا
+              {t.footerContact}
             </h3>
 
             <ul className="space-y-3">
               <li className="flex items-center gap-2 text-xs text-primary-foreground/75" style={{ fontFamily: "'Cairo', sans-serif" }}>
-                <Phone size={16} className="text-accent" />
-                <a href="tel:0502570086" className="transition-colors hover:text-accent">0502570086</a>
+                <Phone size={16} className="shrink-0 text-accent" />
+                <a href="tel:+201153637371" className="transition-colors hover:text-accent">
+                  {t.phone}
+                </a>
               </li>
 
               <li className="flex items-center gap-2 text-xs text-primary-foreground/75" style={{ fontFamily: "'Cairo', sans-serif" }}>
-                <Mail size={16} className="text-accent" />
-                <a href="mailto:alsobkycharity@gmail.com" className="transition-colors hover:text-accent">
+                <Mail size={16} className="shrink-0 text-accent" />
+                <a href="mailto:alsobkycharity@gmail.com" className="break-all transition-colors hover:text-accent">
                   alsobkycharity@gmail.com
                 </a>
               </li>
 
               <li className="flex items-center gap-2 text-xs text-primary-foreground/75" style={{ fontFamily: "'Cairo', sans-serif" }}>
-                <MapPin size={16} className="text-accent" />
-                <span>مصر</span>
+                <MapPin size={16} className="shrink-0 text-accent" />
+                <span>{t.country}</span>
               </li>
             </ul>
 
             <a
-              href="https://wa.me/200502570086"
+              href={getWhatsAppLink(
+                MAIN_WHATSAPP_NUMBER,
+                language === 'ar'
+                  ? 'السلام عليكم، أريد التواصل مع مؤسسة حسن إبراهيم السبكي الخيرية'
+                  : 'Hello, I would like to contact Hassan Ibrahim Al Sobky Charity Foundation',
+              )}
               target="_blank"
               rel="noopener noreferrer"
-              className="mt-5 inline-flex items-center gap-2 rounded-full bg-green-500 px-4 py-2 text-xs font-black text-white transition-all hover:bg-green-600"
+              className="mt-5 inline-flex min-h-[42px] items-center gap-2 rounded-full bg-green-500 px-4 py-2 text-xs font-black text-white transition-all hover:bg-green-600"
               style={{ fontFamily: "'Cairo', sans-serif" }}
             >
               <WhatsAppIcon size={15} />
-              تواصل واتساب
+              {t.whatsapp}
             </a>
           </div>
         </div>
@@ -511,30 +729,30 @@ export function Footer() {
 
       <div className="relative z-10 border-t border-white/10 py-4">
         <div className="mx-auto flex max-w-[1500px] flex-col items-center justify-between gap-3 px-4 text-center sm:px-6 md:flex-row lg:px-10">
-          <p className="text-[11px] text-primary-foreground/55" style={{ fontFamily: "'Cairo', sans-serif" }}>
-            جميع الحقوق محفوظة © 2026 مؤسسة حسن إبراهيم السبكي الخيرية
+          <p className="text-[11px] leading-6 text-primary-foreground/55" style={{ fontFamily: "'Cairo', sans-serif" }}>
+            {t.rights}
           </p>
 
           <div className="flex flex-col items-center gap-1">
             <a
-              href="https://wa.me/201008454029"
+              href={getWhatsAppLink(DEVELOPER_WHATSAPP_NUMBER)}
               target="_blank"
               rel="noopener noreferrer"
               className="text-[11px] font-black text-white transition-colors hover:text-accent"
               style={{ fontFamily: "'Cairo', sans-serif" }}
             >
-              تم البرمجة بواسطة المهندس عمرو خالد
+              {t.developer}
             </a>
 
             <a
-              href="https://wa.me/201008454029"
+              href={getWhatsAppLink(DEVELOPER_WHATSAPP_NUMBER)}
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center gap-1.5 rounded-full bg-green-500 px-3 py-1 text-[11px] font-bold text-white transition-all hover:bg-green-600"
               style={{ fontFamily: "'Cairo', sans-serif" }}
             >
               <WhatsAppIcon size={14} />
-              للتواصل
+              {t.developerContact}
             </a>
           </div>
         </div>
@@ -544,28 +762,84 @@ export function Footer() {
 }
 
 export function Layout({ children }: { children: React.ReactNode }) {
+  const [language, setLanguage] = useState<Lang>(() => getSavedLanguage());
+
+  useEffect(() => {
+    const updateLanguage = () => setLanguage(getSavedLanguage());
+
+    window.addEventListener('site-language-change', updateLanguage);
+
+    return () => window.removeEventListener('site-language-change', updateLanguage);
+  }, []);
+
+  const t = text[language];
+
   return (
-    <div className="flex min-h-screen flex-col bg-background text-foreground transition-colors duration-300 dark:bg-slate-950 dark:text-white" dir="rtl">
+    <div
+      className="flex min-h-screen flex-col bg-background text-foreground transition-colors duration-300 dark:bg-slate-950 dark:text-white"
+      dir={t.dir}
+    >
       <Header />
       <main className="flex-1">{children}</main>
       <Footer />
     </div>
   );
 }
-export function WhatsAppButton(): JSX.Element | null {
-  return null;
+
+export function WhatsAppButton(): JSX.Element {
+  const [language, setLanguage] = useState<Lang>(() => getSavedLanguage());
+
+  useEffect(() => {
+    const updateLanguage = () => setLanguage(getSavedLanguage());
+
+    window.addEventListener('site-language-change', updateLanguage);
+
+    return () => window.removeEventListener('site-language-change', updateLanguage);
+  }, []);
+
+  const t = text[language];
+
+  return (
+    <a
+      href={getWhatsAppLink(
+        MAIN_WHATSAPP_NUMBER,
+        language === 'ar'
+          ? 'السلام عليكم، أريد التواصل مع مؤسسة حسن إبراهيم السبكي الخيرية'
+          : 'Hello, I would like to contact Hassan Ibrahim Al Sobky Charity Foundation',
+      )}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="fixed bottom-5 right-5 z-50 flex h-13 w-13 items-center justify-center rounded-full bg-green-500 text-white shadow-2xl shadow-green-500/30 transition-all hover:-translate-y-1 hover:bg-green-600 active:scale-95 sm:h-14 sm:w-14"
+      aria-label={t.whatsapp}
+    >
+      <WhatsAppIcon size={24} />
+    </a>
+  );
 }
+
 export function BackToTop() {
   const [visible, setVisible] = useState(false);
+  const [language, setLanguage] = useState<Lang>(() => getSavedLanguage());
+
+  useEffect(() => {
+    const updateLanguage = () => setLanguage(getSavedLanguage());
+
+    window.addEventListener('site-language-change', updateLanguage);
+
+    return () => window.removeEventListener('site-language-change', updateLanguage);
+  }, []);
 
   useEffect(() => {
     const onScroll = () => setVisible(window.scrollY > 400);
+
     window.addEventListener('scroll', onScroll, { passive: true });
+    onScroll();
 
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
   const handleClick = () => window.scrollTo({ top: 0, behavior: 'smooth' });
+  const t = text[language];
 
   return (
     <AnimatePresence>
@@ -575,8 +849,8 @@ export function BackToTop() {
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: 20 }}
           onClick={handleClick}
-          className="fixed bottom-6 left-6 z-50 flex h-12 w-12 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-lg transition-all hover:scale-110 hover:bg-primary/90 active:scale-95"
-          aria-label="العودة للأعلى"
+          className="fixed bottom-5 left-5 z-50 flex h-11 w-11 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-lg transition-all hover:scale-110 hover:bg-primary/90 active:scale-95 sm:h-12 sm:w-12"
+          aria-label={t.backToTop}
         >
           <ChevronDown size={20} className="rotate-180" />
         </motion.button>
@@ -586,19 +860,33 @@ export function BackToTop() {
 }
 
 export function LoadingScreen({ onDone }: { onDone: () => void }) {
+  const [language, setLanguage] = useState<Lang>(() => getSavedLanguage());
+
   useEffect(() => {
-    const t = setTimeout(onDone, 2200);
-    return () => clearTimeout(t);
+    const updateLanguage = () => setLanguage(getSavedLanguage());
+
+    window.addEventListener('site-language-change', updateLanguage);
+
+    return () => window.removeEventListener('site-language-change', updateLanguage);
+  }, []);
+
+  useEffect(() => {
+    const timer = setTimeout(onDone, 1600);
+
+    return () => clearTimeout(timer);
   }, [onDone]);
+
+  const t = text[language];
 
   return (
     <motion.div
       initial={{ opacity: 1 }}
       exit={{ opacity: 0 }}
       transition={{ duration: 0.5 }}
-      className="fixed inset-0 z-[100] flex flex-col items-center justify-center bg-primary"
+      className="fixed inset-0 z-[100] flex flex-col items-center justify-center bg-primary px-4 text-center"
+      dir={t.dir}
     >
-      <div className="relative h-32 w-32">
+      <div className="relative h-28 w-28 sm:h-32 sm:w-32">
         <IslamicPattern className="absolute inset-0 text-accent opacity-20" />
 
         <motion.div
@@ -610,19 +898,21 @@ export function LoadingScreen({ onDone }: { onDone: () => void }) {
         <div className="absolute inset-0 flex items-center justify-center">
           <img
             src="/images/logo.jpg"
-            alt="لوجو مؤسسة حسن إبراهيم السبكي الخيرية"
+            alt={t.loadingTitle}
             className="h-20 w-20 object-contain"
+            loading="eager"
+            decoding="async"
           />
         </div>
       </div>
 
       <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }} className="mt-6 text-center">
-        <p className="text-lg font-bold text-primary-foreground" style={{ fontFamily: "'Cairo', sans-serif" }}>
-          مؤسسة حسن إبراهيم السبكي الخيرية
+        <p className="text-base font-bold text-primary-foreground sm:text-lg" style={{ fontFamily: "'Cairo', sans-serif" }}>
+          {t.loadingTitle}
         </p>
 
         <p className="mt-1 text-sm text-accent" style={{ fontFamily: "'Cairo', sans-serif" }}>
-          للقرآن الكريم وخدمة المجتمع
+          {t.loadingSubtitle}
         </p>
       </motion.div>
     </motion.div>
