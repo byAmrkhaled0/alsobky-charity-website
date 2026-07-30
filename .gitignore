@@ -1,101 +1,42 @@
-# --- Dependencies ---
-node_modules/
-jspm_packages/
+# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
-# --- Package manager caches / debug logs ---
-.npm/
-.pnpm-store/
-.pnpm-debug.log*
+# dependencies
+/node_modules
+/.pnp
+.pnp.*
 .yarn/*
 !.yarn/patches
 !.yarn/plugins
 !.yarn/releases
-!.yarn/sdks
 !.yarn/versions
+
+# testing
+/coverage
+
+# next.js
+/.next/
+/out/
+
+# misc
+.DS_Store
+*.pem
+
+# debug
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
-pnpm-debug.log*
-lerna-debug.log*
-bun-debug.log*
+.pnpm-debug.log*
 
-# --- Logs & diagnostics ---
-logs/
-*.log
-report.[0-9]*.json
+# env files (can opt-in for committing if needed)
+.env*
 
-# --- Runtime data / pids ---
-pids/
-*.pid
-*.seed
-*.pid.lock
+# vercel
+.vercel
 
-# --- Env files (keep examples) ---
-.env
-.env.*
-!.env.example
-!.env.*.example
-!.env.local.example
-
-# --- Coverage ---
-coverage/
-.nyc_output/
-
-# --- Build outputs / caches ---
-dist/
-build/
-electron-dist/
-dist-electron/
-out/
-bin/
-.tmp/
-tmp/
-temp/
-.cache/
-.esbuild/
-.esbuild-cache/
-.parcel-cache/
-.rpt2_cache/
-.rts2_cache_cjs/
-.rts2_cache_es/
-.rts2_cache_umd/
-.vite/
-.vite-inspect/
-
-# --- TypeScript ---
-*.tsbuildinfo
-
-# --- Common web frameworks ---
-.next/
-.nuxt/
-.svelte-kit/
-.storybook-out/
-storybook-static/
-.angular/
-.docusaurus/
-.vercel/
-.netlify/
-.output/
-
-# --- E2E / testing artifacts ---
-playwright-report/
-test-results/
-cypress/videos/
-cypress/screenshots/
-cypress/downloads/
-
-# --- Editors & OS junk ---
-.vscode/*
-!.vscode/extensions.json
-!.vscode/tasks.json
-.idea/
-*.iml
-.vs/
-*.swp
-.DS_Store
-Thumbs.db
-.node_repl_history
-
-# --- Uploaded Files ---
-uploaded_files/
-
+# typescript
+next-env.d.ts
+/dist/
+/.wrangler/
+/.sites-runtime/
+/outputs/
+/work/
