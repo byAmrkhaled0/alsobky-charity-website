@@ -6,18 +6,18 @@ import { AnimatePresence } from 'framer-motion';
 import { ROUTE_PATHS } from '@/lib/index';
 import { WhatsAppButton, BackToTop, LoadingScreen } from '@/components/Layout';
 
-import Home from '@/pages/Home';
-import About from '@/pages/About';
-import Services from '@/pages/Services';
-import Competitions from '@/pages/Competitions';
-import YearNine from '@/pages/YearNine';
-import QuranNews from '@/pages/QuranNews';
-import Gallery from '@/pages/Gallery';
-import Donations from '@/pages/Donations';
-import Contact from '@/pages/Contact';
-import Privacy from '@/pages/Privacy';
-import Terms from '@/pages/Terms';
-import NotFound from '@/pages/NotFound';
+import Home from '@/views/Home';
+import About from '@/views/About';
+import Services from '@/views/Services';
+import Competitions from '@/views/Competitions';
+import YearNine from '@/views/YearNine';
+import QuranNews from '@/views/QuranNews';
+import Gallery from '@/views/Gallery';
+import Donations from '@/views/Donations';
+import Contact from '@/views/Contact';
+import Privacy from '@/views/Privacy';
+import Terms from '@/views/Terms';
+import NotFound from '@/views/NotFound';
 
 export default function App() {
   const [loading, setLoading] = useState(true);

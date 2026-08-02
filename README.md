@@ -4,6 +4,17 @@ A clean full-stack starter running on
 [vinext](https://github.com/cloudflare/vinext), with optional Cloudflare D1 and
 Drizzle support.
 
+## Vercel deployment
+
+The repository includes `vercel.json` so Vercel uses the native Next.js build
+instead of the Sites/Vinext artifact build. Keep the Vercel project Root
+Directory set to the repository root. The repository configuration selects the
+Next.js framework, runs `npx next build`, and publishes `.next`.
+
+The `npm run build` script is intentionally reserved for the Sites/Vinext
+artifact. Do not replace it in the Vercel dashboard; `vercel.json` supplies the
+Vercel-specific build command.
+
 ## Prerequisites
 
 - Node.js `>=22.13.0`

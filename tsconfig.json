@@ -38,6 +38,13 @@
     "hooks/use-toast.ts",
     "lib/react-router-dom-proxy.tsx",
     "lib/utils.ts",
-    "pages/not-found/**"
+    "views/not-found/**",
+    "db/**",
+    "drizzle.config.ts",
+    "drizzle/**",
+    "examples/**",
+    "worker/**",
+    "build/**",
+    "vite.config.ts"
   ]
 }

@@ -797,7 +797,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
   );
 }
 
-export function WhatsAppButton(): JSX.Element {
+export function WhatsAppButton(): React.JSX.Element {
   const [language, setLanguage] = useState<Lang>(() => getSavedLanguage());
 
   useEffect(() => {
